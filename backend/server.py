@@ -36,7 +36,7 @@ def addProduct():
 
 
 # example http://127.0.0.1:5000/registerCustomer?username=vikasdorn&password=password1&address=557%20Cherrywood%20Lane&email_address=vikasdorn@gmail.com
-# you need to GET this page with the product_name and price arguments
+# you need to GET this page with the username, password, address (where spaces are "%20"), and email_address arguments
 @app.route('/registerCustomer')
 def registerCustomer():
     print("registerCustomer")
@@ -61,6 +61,7 @@ def registerCustomer():
 
     return 'OK'
 
+# example http://127.0.0.1:5000/getProducts 
 @app.route('/getProducts')
 def getProducts():
     print("getProducts")
