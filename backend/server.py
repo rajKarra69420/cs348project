@@ -1,6 +1,7 @@
 from flask import (
     Flask,
-    request
+    request,
+    jsonify
 )
 import mysql.connector
 import json
@@ -32,7 +33,10 @@ def addProduct():
     cnx.commit()
     cursor.close()
 
-    return 'OK'
+    response = jsonify(message="OK")
+    response.headers.add("Access-Control-Allow-Origin", "*")
+
+    return response
 
 
 # example http://127.0.0.1:5000/registerCustomer?username=vikasdorn&password=password1&address=557%20Cherrywood%20Lane&email_address=vikasdorn@gmail.com
@@ -59,7 +63,10 @@ def registerCustomer():
     cnx.commit()
     cursor.close()
 
-    return 'OK'
+    response = jsonify(message="OK")
+    response.headers.add("Access-Control-Allow-Origin", "*")
+
+    return response
 
 # example http://127.0.0.1:5000/getProducts 
 @app.route('/getProducts')
