@@ -85,8 +85,10 @@ def getProducts():
     for (product_id, product_name, price) in cursor:
        returnDict[product_id] = [product_name, '{0:.2f}'.format(price)]
     cursor.close()
+    response = jsonify(returnDict)
+    response.headers.add("Access-Control-Allow-Origin", "*")
 
-    return json.dumps(returnDict)
+    return response
 
 
 
