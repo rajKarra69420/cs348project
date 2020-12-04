@@ -12,22 +12,25 @@ app = Flask(__name__)
 def index():
     return "test"
 
-# example http://127.0.0.1:5000/addProduct?product_name=pencil&price=5
-# you need to GET this page with the product_name and price arguments
+# example http://127.0.0.1:5000/addProduct?product_name=pencil&price=5&type=schoolgear
+# you need to GET this page with the product_name, price, and type arguments
+# spaces indicated by "%20"
 @app.route('/addProduct')
 def addProduct():
     print("addProduct")
     new_product_name = "'" + request.args.get('product_name') + "'"
     new_price = request.args.get('price')
+    new_type = "'" + request.args.get('type') + "'"
 
     print("one: " + new_product_name + "\n")
     print("two: " + new_price + "\n")
+    print("three: " + new_type + "\n")
 
     cnx = mysql.connector.connect(user='root', password= '',
                                   host='34.72.148.165',
                                   database='shop')
     cursor = cnx.cursor()
-    query = "INSERT INTO Products (product_name, price) VALUES (" + new_product_name + ", " + new_price + ");" # a query populated by the following if-statements
+    query = "INSERT INTO Products (product_name, price, type) VALUES (" + new_product_name + ", " + str(new_price) + ", " + new_type + ");" # a query populated by the following if-statements
     print("query: " + query + "\n")
     cursor.execute(query)
     cnx.commit()
@@ -37,6 +40,58 @@ def addProduct():
     response.headers.add("Access-Control-Allow-Origin", "*")
 
     return response
+
+
+# example http://127.0.0.1:5000/addToCart?product_id=1&cust_id=2&quantity=5&total=100
+# the "total" should be the quantity * price of the product_id in the Products table
+# product_id should be an actual product_id that exists in Products table
+# cust_id should be an actual cust_id that exists in Customers table
+# spaces indicated by "%20"
+@app.route('/addToCart')
+def addToCart():
+    print("addToCart")
+
+    product_id = request.args.get('product_id')
+    cust_id = request.args.get('cust_id')
+    quantity = request.args.get('quantity')
+    total = "'" + request.args.get('total') + "'"
+
+    cnx = mysql.connector.connect(user='root', password='',
+                                  host='34.72.148.165',
+                                  database='shop')
+
+    cursor = cnx.cursor()
+    cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE")
+    cursor.execute("INSERT INTO Cart_Item (total, quantity, product_id) VALUES(" + str(total) + ", " + str(quantity) + ", " + str(product_id) + ");")
+    cursor.execute("SELECT MAX(cart_item_id) FROM Cart_Item;")
+    current_id = -1
+    for (cart_item_id) in cursor:
+        current_id = str(cart_item_id)
+    current_id = current_id.replace('(', '')
+    current_id = current_id.replace(')', '')
+    current_id = current_id.replace(',', '')
+    print("current_id: " + str(current_id))
+    cursor.execute("SELECT cart_id FROM Cart WHERE cust_id = " + cust_id)
+    val = str(cursor.fetchall())
+    if val == '[]':
+        cursor.execute("INSERT INTO Cart (cart_item_id, cust_id) VALUES(" + str(current_id) + ", " + str(cust_id) + ");")
+    else:
+        val = val.replace('[', '')
+        val = val.replace(']', '')
+        val = val.split(',', 1)[0]
+        val = val.replace('(', '')
+        val = val.replace(')', '')
+        cursor.execute(
+            "INSERT INTO Cart (cart_id, cart_item_id, cust_id) VALUES(" + str(val) + ", " + str(current_id) + ", " + str(cust_id) + ");")
+    cnx.commit()
+    cursor.close()
+
+    response = jsonify(message="OK")
+    response.headers.add("Access-Control-Allow-Origin", "*")
+
+    return response
+
+
 
 
 # example http://127.0.0.1:5000/registerCustomer?username=vikasdorn&password=password1&address=557%20Cherrywood%20Lane&email_address=vikasdorn@gmail.com
