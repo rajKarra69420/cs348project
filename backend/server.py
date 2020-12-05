@@ -182,17 +182,14 @@ def groupByType():
                                   host='34.72.148.165',
                                   database='shop')
 	cursor = cnx.cursor()
-	product_group_query = "SELECT product_name FROM Products GROUP BY type";
-	product_totals_group = "SELECT sum(price) FROM Products GROUP BY type";
+	product_group_query = "SELECT product_name, sum(price) FROM Products GROUP BY type";
 	cursor.execute(product_group_query)
 	rows_group = cursor.fetchall()
 	if(len(rows_group) == 0):
 		return
-	cursor.execute(product_totals_group)
-	rows_total = cursor.fetchall()
-	if(len(rows_total) == 0 or len(rows_group)!= len(rows_total)):
-		return
-	productGroupRet = {rows_group[i]: rows_total[i] for i in range(len(rows_group))} 
+	productGroupRet = {}
+	for each row in product_group_query:
+		productGroupRet[row[0]] = '{0:.2f}'.format(row[1])
 	response = jsonify(productGroupRet)
 	#response.headers.add("Access-Control-Allow-Origin", "*") idk what this does
 
