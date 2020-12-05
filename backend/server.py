@@ -145,7 +145,37 @@ def getProducts():
 
     return response
 
-
+   #the logic is right but I'm not sure how to integrate this in the backend
+   #@app.route() what do I do here
+   def getCustomerProducts(cust):
+	cnx = mysql.connector.connect(user='root', password= '',
+                                  host='34.72.148.165',
+                                  database='shop')
+	cursor = cnx.cursor()
+	sql_get_cart_item_id = “SELECT cart_item_id FROM Cart_Item WHERE cust_id =“ + str(cust.cust_id)
+	cursor.execute(sql_get_cart_item_id)
+	rows = cursor.fetchall()
+	if(len(r) == 0):
+		return
+	product_ids = []
+	for each r in rows:
+		sql_get_productIds = “SELECT product_id FROM Cart_Item WHERE cart_item_id = “ + str(r)
+		cursor.execute(sql_get_productIds)
+	results = cursor.fetchall()
+	if(len(results) == 0):
+		continue
+	product_ids.append(results[0])
+	
+	for p in product_ids:
+		sql_get_product_name = “SELECT product_name FROM Products WHERE product_id = ” + str(p)
+		cursor.execute(sql_get_product_name)
+		results = cursor.fetchall()
+		if(len(results) == 0):
+			continue
+		product_names.append(results[0])
+      cursor.close()
+      #do I convert product_names to dict to jsonify?
+	return product_names
 
 if __name__ == "__main__":
     app.run(debug=True)
