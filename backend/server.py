@@ -145,9 +145,9 @@ def getProducts():
 
     return response
 
-   #the logic is right but I'm not sure how to integrate this in the backend
-   #@app.route() what do I do here
-   def getCustomerProducts(cust):
+  #the logic is right but I'm not sure how to integrate this in the backend
+  #@app.route() what do I do here
+  def getCustomerProducts(cust):
 	cnx = mysql.connector.connect(user='root', password= '',
                                   host='34.72.148.165',
                                   database='shop')
@@ -177,5 +177,6 @@ def getProducts():
       #do I convert product_names to dict to jsonify?
 	return product_names
 
+	
 if __name__ == "__main__":
     app.run(debug=True)
