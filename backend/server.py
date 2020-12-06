@@ -153,6 +153,7 @@ def getProducts():
                                   database='shop')
 	cursor = cnx.cursor()
 	sql_get_cart_item_id = “SELECT cart_item_id FROM Cart_Item WHERE cust_id =“ + str(cust.cust_id)
+	cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED")
 	cursor.execute(sql_get_cart_item_id)
 	rows = cursor.fetchall()
 	if(len(r) == 0):
