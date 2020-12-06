@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import { Alert } from '@material-ui/lab';
 import { Typography } from '@material-ui/core';
+import { Redirect } from 'react-router-dom';
 
 const axios = require('axios');
 
@@ -13,6 +15,8 @@ class RegistrationPage extends Component {
             password: null,
             address: null,
             email_address: null,
+            error: false,
+            redirect: false,
         }
         
         this.handleChange = this.handleChange.bind(this);
@@ -37,17 +41,28 @@ class RegistrationPage extends Component {
                 email_address: this.state.email_address,
             }
         })
-        .then(res => {
-            console.log(res);
+        .then(() => {
+            this.setState({
+                redirect: true,
+            }) 
         })
-        .catch(err => {
-            console.log(err);
+        .catch(() => {
+            this.setState({
+                error: true,
+            })
         })
     }
 
     render() {
+        const redirect = this.state.redirect;
+        const redirectString = '/login'
+        if (redirect) {
+            return <Redirect to={redirectString}/>
+        }
+
         return(
             <div>
+                {this.state.error ? <Alert severity="error">There was an error creating your account. Please try again.</Alert> : null}
                 <Typography variant="h2">Create New Account</Typography>
                 <form>
                     <TextField id="username" label="Username" variant="outlined" onChange={this.handleChange}/>

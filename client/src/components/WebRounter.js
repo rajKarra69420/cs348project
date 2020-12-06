@@ -5,6 +5,7 @@ import { LoginPage } from './LoginPage.js';
 import { ItemSelectionPage } from './ItemSelectionPage.js';
 import { AddProductPage } from './AddProductPage.js';
 import { RegistrationPage } from './RegistrationPage.js';
+import { ShoppingCartPage } from './ShoppingCartPage';
 
 
 function WebRouter() {
@@ -16,6 +17,7 @@ function WebRouter() {
             <Route path='/login' component={() => <LoginPage />} />
             <Route path='/addProduct' component={() => <AddProductPage/>}/>
             <Route path='/registerCustomer' component={() => <RegistrationPage/>}/>
+            <Route path='/shoppingCart' component={() => <ShoppingCartPage/>}/>
           </Switch>
       </Router>
     </div>

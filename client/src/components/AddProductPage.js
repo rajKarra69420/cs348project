@@ -11,6 +11,7 @@ class AddProductPage extends Component {
         this.state = {
             name: null,
             price: null,
+            type: null,
         }
         
         this.handleChange = this.handleChange.bind(this);
@@ -31,6 +32,7 @@ class AddProductPage extends Component {
             params: {
                 product_name: this.state.name,
                 price: this.state.price,
+                type: this.state.type,
             }
         })
         .then(res => {
@@ -49,6 +51,8 @@ class AddProductPage extends Component {
                     <TextField id="name" label="Name" variant="outlined" onChange={this.handleChange}/>
                     <br></br>
                     <TextField id="price" label="Price" variant="outlined" onChange={this.handleChange}/>
+                    <br></br>
+                    <TextField id="type" label="Type" variant="outlined" onChange={this.handleChange}/>
                     <br></br>
                     <Button variant="contained" color="primary" onClick={this.handleSubmit}>Add Product</Button>
                 </form>
