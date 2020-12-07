@@ -162,17 +162,14 @@ def getCustomerProducts():
     cust_id = request.args.get('cust_id')
     #cursor = cnx.cursor()
     cursor = cnx.cursor(prepared=True)
-    sql_get_cart_item_id = "SELECT cart_item_id FROM Cart_Item WHERE cust_id = %s"
-    set_isolation_level = "SET SESSION TRANSACTION ISOLATION %s")
-    cursor.execute(set_isolation_level, "LEVEL READ COMMITTED")
-    cursor.execute(sql_get_cart_item_id, str(cust_id))
+    cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED")
+    cursor.execute("SELECT cart_item_id FROM Cart_Item WHERE cust_id = " + cust_id)
     rows = cursor.fetchall()
     if (len(rows) == 0):
         return
     product_ids = []
     for r in rows:
-        sql_get_productIds = "SELECT product_id FROM Cart_Item WHERE cart_item_id = %s"
-        cursor.execute(sql_get_productIds, str(r))
+        cursor.execute("SELECT product_id FROM Cart_Item WHERE cart_item_id = " + str(r[0]))
         results = cursor.fetchall()
         if len(results) == 0:
             continue
@@ -180,15 +177,14 @@ def getCustomerProducts():
 
     product_names = []
     for p in product_ids:
-        sql_get_product_name = "SELECT product_name FROM Products WHERE product_id = %s"
-        cursor.execute(sql_get_product_name, str(p))
+        cursor.execute("SELECT product_name FROM Products WHERE product_id = " + str(p[0]))
         results = cursor.fetchall()
         if len(results) == 0:
             continue
         product_names.append(results[0])
     cursor.close()
 
-    response = json.dumps(product_names)
+    response = jsonify(product_names)
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
