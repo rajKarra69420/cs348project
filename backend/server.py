@@ -145,13 +145,12 @@ def getProducts():
     cursor.execute(query)
 
     for (product_id, product_name, price) in cursor:
-        returnDict[product_id] = [product_name, '{0:.2f}'.format(price)]
+        returnDict[product_id] = [product_name, '{0:.2f}'.format(price), product_id]
     cursor.close()
     response = jsonify(returnDict)
     response.headers.add("Access-Control-Allow-Origin", "*")
 
     return response
-
 
 # example http://127.0.0.1:5000/getCustomerProducts?cust_id=5
 @app.route('/getCustomerProducts')
@@ -165,7 +164,7 @@ def getCustomerProducts():
     cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED")
     cursor.execute(sql_get_cart_item_id)
     rows = cursor.fetchall()
-    if (len(r) == 0):
+    if (len(rows) == 0):
         return
     product_ids = []
     for r in rows:
@@ -186,7 +185,7 @@ def getCustomerProducts():
         product_names.append(results[0])
     cursor.close()
 
-    response = json.dumps(product_names)
+    response = jsonify(product_names)
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
@@ -220,7 +219,7 @@ def login():
                                   database='shop')
     cursor = cnx.cursor()
 
-    query = "SELECT * FROM Customer WHERE username = " + str(username) + " AND password = " + str(password)
+    query = "SELECT cust_id FROM Customer WHERE username = " + str(username) + " AND password = " + str(password)
     cursor.execute(query)
     resp = cursor.fetchall()
 
@@ -228,7 +227,7 @@ def login():
         response = jsonify("Invalid Details")
         response.headers.add("Access-Control-Allow-Origin", "*")
     else:
-        response = jsonify("OK")
+        response = jsonify(resp)
         response.headers.add("Access-Control-Allow-Origin", "*")
 
     return response

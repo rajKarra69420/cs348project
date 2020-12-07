@@ -15,6 +15,7 @@ class LoginPage extends Component {
             password: null,
             redirect: false,
             error: false,
+            userid: null,
         }
         
         this.handleChange = this.handleChange.bind(this);
@@ -30,17 +31,20 @@ class LoginPage extends Component {
     }
 
     handleSubmit(e) {
-        console.log(this.state);
         axios.get('http://127.0.0.1:5000/login', {
             params: {
                 username: this.state.username,
                 password: this.state.password,
             }
         })
-        .then(() => {
-            this.setState({
-                redirect: true,
-            })
+        .then((res) => {
+            console.log(res.data)
+            if (Array.isArray(res.data)) {
+                this.setState({
+                    redirect: true,
+                    userid: res.data[0][0],
+                })
+            }
         })
         .catch(err => {
             this.setState({
@@ -51,7 +55,7 @@ class LoginPage extends Component {
 
     render() {
         const redirect = this.state.redirect;
-        const redirectString = '/?userid=' + this.state.username;
+        const redirectString = '/?userid=' + this.state.userid;
         if (redirect) {
             return <Redirect to={redirectString}/>
         }
@@ -65,7 +69,7 @@ class LoginPage extends Component {
                     <br></br>
                     <TextField id="password" label="Password" variant="outlined" type="password" onChange={this.handleChange}/>
                     <br></br>
-                    <Button variant="contained" color="primary" onClick={this.handleSubmit}>Register</Button>
+                    <Button variant="contained" color="primary" onClick={this.handleSubmit}>Login</Button>
                 </form>
             </div>
         );

@@ -18,8 +18,13 @@ class ShoppingCartPage extends Component {
     }
 
     getItems() {
-        axios.get('http://127.0.0.1:5000/getCartProducts')
+        axios.get('http://127.0.0.1:5000/getCustomerProducts', {
+            params: {
+                cust_id: window.location.href.split("userid=")[1],
+            }
+        })
         .then((res) => {
+            console.log(res.data)
             const items = Object.values(res.data);
             this.setState({
                 items,
