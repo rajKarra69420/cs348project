@@ -67,7 +67,7 @@ def addToCart():
     cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE")
     cursor.execute(
         "INSERT INTO Cart_Item (total, quantity, product_id, cust_id) VALUES(" + str(total) + ", " + str(quantity) + ", " + str(
-            product_id) + str(cust_id)");")
+            product_id) + str(cust_id) + ");")
     cursor.execute("SELECT MAX(cart_item_id) FROM Cart_Item;")
     current_id = -1
     for (cart_item_id) in cursor:
@@ -145,7 +145,7 @@ def getProducts():
     cursor.execute(query)
 
     for (product_id, product_name, price) in cursor:
-        returnDict[product_id] = [product_name, '{0:.2f}'.format(price)]
+        returnDict[product_id] = [product_name, '{0:.2f}'.format(price), product_id]
     cursor.close()
     response = jsonify(returnDict)
     response.headers.add("Access-Control-Allow-Origin", "*")
@@ -229,7 +229,7 @@ def login():
         response = jsonify("Invalid Details")
         response.headers.add("Access-Control-Allow-Origin", "*")
     else:
-        response = jsonify("OK")
+        response = jsonify(resp)
         response.headers.add("Access-Control-Allow-Origin", "*")
 
     return response
