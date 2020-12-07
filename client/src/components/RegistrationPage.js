@@ -61,7 +61,7 @@ class RegistrationPage extends Component {
         }
 
         return(
-            <div>
+            <div style={{textAlign: 'center', marginTop: '10%'}}>
                 {this.state.error ? <Alert severity="error">There was an error creating your account. Please try again.</Alert> : null}
                 <Typography variant="h2">Create New Account</Typography>
                 <form>

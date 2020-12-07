@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import placeholderImage from './placeholder.png';
 import './ItemSelectionPage.css';
@@ -45,15 +46,18 @@ class ShoppingCartPage extends Component {
         ))
         
         return(
-            <Box
-                display="flex"
-                flexWrap="wrap"
-                alignContent="flex-start"
-                p={1}
-                m={1}
-            >
-                {displayItems}
-            </Box>
+            <div style={{textAlign: 'center'}}>
+                <Typography variant="h2">Shopping Cart</Typography>
+                <Box
+                    display="flex"
+                    flexWrap="wrap"
+                    alignContent="flex-start"
+                    p={1}
+                    m={1}
+                >
+                    {displayItems}
+                </Box>
+            </div>
         )
     }
 }

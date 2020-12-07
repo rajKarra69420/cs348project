@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
+import { Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import placeholderImage from './placeholder.png';
@@ -90,7 +91,8 @@ class ItemSelectionPage extends Component {
             return <Redirect to={redirectString}/>
         }
         return(
-            <div>
+            <div style={{textAlign: 'center'}}>
+                <Typography variant="h2">Products</Typography>
                 <Button variant="contained" color="primary" onClick={this.handleSubmit}>Go to Cart</Button>
                 <br></br>
                 <Box

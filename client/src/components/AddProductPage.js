@@ -45,7 +45,7 @@ class AddProductPage extends Component {
 
     render() {
         return(
-            <div>
+            <div style={{textAlign: 'center', marginTop: '10%'}}>
                 <Typography variant="h2">Add Product</Typography>
                 <form>
                     <TextField id="name" label="Name" variant="outlined" onChange={this.handleChange}/>
