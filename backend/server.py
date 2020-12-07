@@ -145,13 +145,15 @@ def getProducts():
 
     return response
 
+# example http://127.0.0.1:5000/getCustomerProducts?cust_id=5
 @app.route('/getCustomerProducts')
-def getCustomerProducts(cust):
+def getCustomerProducts():
     cnx = mysql.connector.connect(user='root', password= '',
                                   host='34.72.148.165',
                                   database='shop')
+    cust_id = request.args.get('cust_id')
     cursor = cnx.cursor()
-    sql_get_cart_item_id = "SELECT cart_item_id FROM Cart_Item WHERE cust_id =" + str(cust.cust_id)
+    sql_get_cart_item_id = "SELECT cart_item_id FROM Cart_Item WHERE cust_id =" + str(cust_id)
     cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED")
     cursor.execute(sql_get_cart_item_id)
     rows = cursor.fetchall()
@@ -181,6 +183,8 @@ def getCustomerProducts(cust):
 
     return response
 
+# example http://127.0.0.1:5000/groupByType
+@app.route("/groupByType")
 def groupByType():
     cnx = mysql.connector.connect(user='root', password= '',
                                   host='34.72.148.165',
