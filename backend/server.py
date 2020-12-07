@@ -66,8 +66,8 @@ def addToCart():
     cursor = cnx.cursor()
     cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE")
     cursor.execute(
-        "INSERT INTO Cart_Item (total, quantity, product_id) VALUES(" + str(total) + ", " + str(quantity) + ", " + str(
-            product_id) + ");")
+        "INSERT INTO Cart_Item (total, quantity, product_id, cust_id) VALUES(" + str(total) + ", " + str(quantity) + ", " + str(
+            product_id) + str(cust_id)");")
     cursor.execute("SELECT MAX(cart_item_id) FROM Cart_Item;")
     current_id = -1
     for (cart_item_id) in cursor:
@@ -145,12 +145,13 @@ def getProducts():
     cursor.execute(query)
 
     for (product_id, product_name, price) in cursor:
-        returnDict[product_id] = [product_name, '{0:.2f}'.format(price), product_id]
+        returnDict[product_id] = [product_name, '{0:.2f}'.format(price)]
     cursor.close()
     response = jsonify(returnDict)
     response.headers.add("Access-Control-Allow-Origin", "*")
 
     return response
+
 
 # example http://127.0.0.1:5000/getCustomerProducts?cust_id=5
 @app.route('/getCustomerProducts')
@@ -186,7 +187,7 @@ def getCustomerProducts():
         product_names.append(results[0])
     cursor.close()
 
-    response = jsonify(product_names)
+    response = json.dumps(product_names)
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
@@ -220,7 +221,7 @@ def login():
                                   database='shop')
     cursor = cnx.cursor()
 
-    query = "SELECT cust_id FROM Customer WHERE username = " + str(username) + " AND password = " + str(password)
+    query = "SELECT * FROM Customer WHERE username = " + str(username) + " AND password = " + str(password)
     cursor.execute(query)
     resp = cursor.fetchall()
 
@@ -228,7 +229,7 @@ def login():
         response = jsonify("Invalid Details")
         response.headers.add("Access-Control-Allow-Origin", "*")
     else:
-        response = jsonify(resp)
+        response = jsonify("OK")
         response.headers.add("Access-Control-Allow-Origin", "*")
 
     return response
