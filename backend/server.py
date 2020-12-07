@@ -180,7 +180,6 @@ def getCustomerProducts():
 
     response = json.dumps(product_names)
     response.headers.add("Access-Control-Allow-Origin", "*")
-
     return response
 
 # example http://127.0.0.1:5000/groupByType
