@@ -145,56 +145,59 @@ def getProducts():
 
     return response
 
-  #the logic is right but I'm not sure how to integrate this in the backend
-  #@app.route() what do I do here
-  def getCustomerProducts(cust):
-	cnx = mysql.connector.connect(user='root', password= '',
+@app.route('/getCustomerProducts')
+def getCustomerProducts(cust):
+    cnx = mysql.connector.connect(user='root', password= '',
                                   host='34.72.148.165',
                                   database='shop')
-	cursor = cnx.cursor()
-	sql_get_cart_item_id = “SELECT cart_item_id FROM Cart_Item WHERE cust_id =“ + str(cust.cust_id)
-	cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED")
-	cursor.execute(sql_get_cart_item_id)
-	rows = cursor.fetchall()
-	if(len(r) == 0):
-		return
-	product_ids = []
-	for each r in rows:
-		sql_get_productIds = “SELECT product_id FROM Cart_Item WHERE cart_item_id = “ + str(r)
-		cursor.execute(sql_get_productIds)
-	results = cursor.fetchall()
-	if(len(results) == 0):
-		continue
-	product_ids.append(results[0])
-	
-	for p in product_ids:
-		sql_get_product_name = “SELECT product_name FROM Products WHERE product_id = ” + str(p)
-		cursor.execute(sql_get_product_name)
-		results = cursor.fetchall()
-		if(len(results) == 0):
-			continue
-		product_names.append(results[0])
-      cursor.close()
-      #do I convert product_names to dict to jsonify?
-	return product_names
+    cursor = cnx.cursor()
+    sql_get_cart_item_id = "SELECT cart_item_id FROM Cart_Item WHERE cust_id =" + str(cust.cust_id)
+    cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED")
+    cursor.execute(sql_get_cart_item_id)
+    rows = cursor.fetchall()
+    if(len(r) == 0):
+        return
+    product_ids = []
+    for r in rows:
+        sql_get_productIds = "SELECT product_id FROM Cart_Item WHERE cart_item_id = " + str(r)
+        cursor.execute(sql_get_productIds)
+        results = cursor.fetchall()
+        if len(results) == 0:
+            continue
+        product_ids.append(results[0])
+
+    product_names = []
+    for p in product_ids:
+        sql_get_product_name = "SELECT product_name FROM Products WHERE product_id = " + str(p)
+        cursor.execute(sql_get_product_name)
+        results = cursor.fetchall()
+        if len(results) == 0:
+            continue
+        product_names.append(results[0])
+    cursor.close()
+
+    response = json.dumps(product_names)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+
+    return response
 
 def groupByType():
-	cnx = mysql.connector.connect(user='root', password= '',
+    cnx = mysql.connector.connect(user='root', password= '',
                                   host='34.72.148.165',
                                   database='shop')
-	cursor = cnx.cursor()
-	product_group_query = "SELECT product_name, sum(price) FROM Products GROUP BY type";
-	cursor.execute(product_group_query)
-	rows_group = cursor.fetchall()
-	if(len(rows_group) == 0):
-		return
-	productGroupRet = {}
-	for each row in product_group_query:
-		productGroupRet[row[0]] = '{0:.2f}'.format(row[1])
-	response = jsonify(productGroupRet)
-	#response.headers.add("Access-Control-Allow-Origin", "*") idk what this does
+    cursor = cnx.cursor()
+    product_group_query = "SELECT product_name, sum(price) FROM Products GROUP BY type";
+    cursor.execute(product_group_query)
+    rows_group = cursor.fetchall()
+    if(len(rows_group) == 0):
+        return
+    productGroupRet = {}
+    for row in product_group_query:
+        productGroupRet[row[0]] = '{0:.2f}'.format(row[1])
+    response = jsonify(productGroupRet)
+    response.headers.add("Access-Control-Allow-Origin", "*")
 
-    	return response
+    return response
 	
 if __name__ == "__main__":
     app.run(debug=True)
