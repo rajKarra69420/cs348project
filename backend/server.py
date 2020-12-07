@@ -162,10 +162,10 @@ def getProducts():
 	for each r in rows:
 		sql_get_productIds = “SELECT product_id FROM Cart_Item WHERE cart_item_id = “ + str(r)
 		cursor.execute(sql_get_productIds)
-	results = cursor.fetchall()
-	if(len(results) == 0):
-		continue
-	product_ids.append(results[0])
+		results = cursor.fetchall()
+		if(len(results) == 0):
+			continue
+		product_ids.append(results[0])
 	
 	for p in product_ids:
 		sql_get_product_name = “SELECT product_name FROM Products WHERE product_id = ” + str(p)
