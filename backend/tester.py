@@ -19,10 +19,9 @@ cnx = mysql.connector.connect(user='root', password= '',
 # cnx.commit()
 # cursor.close()
 cursor = cnx.cursor()
-query = "SELECT cart_id FROM Cart" # a query populated by the following if-statements
+query = "SELECT * from Customer" # a query populated by the following if-statements
 cursor.execute(query)
-
-
-for (cart_id) in cursor:
-    print(str(cart_id))
+resp = cursor.fetchall()
 cursor.close()
+
+print(str(resp))

@@ -210,6 +210,30 @@ def groupByType():
     response.headers.add("Access-Control-Allow-Origin", "*")
 
     return response
+#example http://127.0.0.1:5000/login?username=random&password=thing
+@app.route("/login")
+def login():
+    username = "'" + request.args.get('username') + "'"
+    password = "'" + request.args.get('password') + "'"
+    cnx = mysql.connector.connect(user='root', password='',
+                                  host='34.72.148.165',
+                                  database='shop')
+    cursor = cnx.cursor()
+
+    query = "SELECT * FROM Customer WHERE username = " + str(username) + " AND password = " + str(password)
+    cursor.execute(query)
+    resp = cursor.fetchall()
+
+    if str(resp) == "[]":
+        response = jsonify("Invalid Details")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+    else:
+        response = jsonify("OK")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+
+    return response
+
+
 
 
 if __name__ == "__main__":
