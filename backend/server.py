@@ -156,6 +156,7 @@ def getProducts():
 # example http://127.0.0.1:5000/getCustomerProducts?cust_id=5
 @app.route('/getCustomerProducts')
 def getCustomerProducts():
+    #executemany: https://stackoverflow.com/questions/53185081/error-1210-incorrect-number-of-arguments-executing-prepared-statement/53185175
     cnx = mysql.connector.connect(user='root', password='',
                                   host='34.72.148.165',
                                   database='shop')
