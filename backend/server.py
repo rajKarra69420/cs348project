@@ -65,7 +65,8 @@ def addToCart():
 
     cursor = cnx.cursor()
     cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE")
-    cursor.execute(
+    #https://stackoverflow.com/questions/53185081/error-1210-incorrect-number-of-arguments-executing-prepared-statement/53185175
+    cursor.executemany(
         "INSERT INTO Cart_Item (total, quantity, product_id, cust_id) VALUES(" + str(total) + ", " + str(quantity) + ", " + str(
             product_id) + ", " + str(cust_id) + ");")
     cursor.execute("SELECT MAX(cart_item_id) FROM Cart_Item;")
