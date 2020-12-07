@@ -65,8 +65,7 @@ def addToCart():
 
     cursor = cnx.cursor()
     cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE")
-    #https://stackoverflow.com/questions/53185081/error-1210-incorrect-number-of-arguments-executing-prepared-statement/53185175
-    cursor.executemany(
+    cursor.execute(
         "INSERT INTO Cart_Item (total, quantity, product_id, cust_id) VALUES(" + str(total) + ", " + str(quantity) + ", " + str(
             product_id) + ", " + str(cust_id) + ");")
     cursor.execute("SELECT MAX(cart_item_id) FROM Cart_Item;")
@@ -164,7 +163,8 @@ def getCustomerProducts():
     #cursor = cnx.cursor()
     cursor = cnx.cursor(prepared=True)
     sql_get_cart_item_id = "SELECT cart_item_id FROM Cart_Item WHERE cust_id = %s"
-    cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED")
+    set_isolation_level = "SET SESSION TRANSACTION ISOLATION %s")
+    cursor.execute(set_isolation_level, "LEVEL READ COMMITTED")
     cursor.execute(sql_get_cart_item_id, str(cust_id))
     rows = cursor.fetchall()
     if (len(rows) == 0):
