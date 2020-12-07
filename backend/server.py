@@ -156,6 +156,7 @@ def getProducts():
 # example http://127.0.0.1:5000/getCustomerProducts?cust_id=5
 @app.route('/getCustomerProducts')
 def getCustomerProducts():
+    #executemany: https://stackoverflow.com/questions/53185081/error-1210-incorrect-number-of-arguments-executing-prepared-statement/53185175
     cnx = mysql.connector.connect(user='root', password='',
                                   host='34.72.148.165',
                                   database='shop')
@@ -163,16 +164,15 @@ def getCustomerProducts():
     #cursor = cnx.cursor()
     cursor = cnx.cursor(prepared=True)
     sql_get_cart_item_id = "SELECT cart_item_id FROM Cart_Item WHERE cust_id = %s"
-    set_isolation_level = "SET SESSION TRANSACTION ISOLATION %s")
-    cursor.execute(set_isolation_level, "LEVEL READ COMMITTED")
-    cursor.execute(sql_get_cart_item_id, str(cust_id))
+    cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED")
+    cursor.executemany(sql_get_cart_item_id, str(cust_id))
     rows = cursor.fetchall()
     if (len(rows) == 0):
         return
     product_ids = []
     for r in rows:
         sql_get_productIds = "SELECT product_id FROM Cart_Item WHERE cart_item_id = %s"
-        cursor.execute(sql_get_productIds, str(r))
+        cursor.executemany(sql_get_productIds, str(r))
         results = cursor.fetchall()
         if len(results) == 0:
             continue
@@ -181,7 +181,7 @@ def getCustomerProducts():
     product_names = []
     for p in product_ids:
         sql_get_product_name = "SELECT product_name FROM Products WHERE product_id = %s"
-        cursor.execute(sql_get_product_name, str(p))
+        cursor.executemany(sql_get_product_name, str(p))
         results = cursor.fetchall()
         if len(results) == 0:
             continue
