@@ -166,7 +166,7 @@ def getCustomerProducts():
     cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED")
     cursor.execute(sql_get_cart_item_id, str(cust_id))
     rows = cursor.fetchall()
-    if (len(r) == 0):
+    if (len(rows) == 0):
         return
     product_ids = []
     for r in rows:
