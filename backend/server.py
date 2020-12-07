@@ -67,7 +67,7 @@ def addToCart():
     cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE")
     cursor.execute(
         "INSERT INTO Cart_Item (total, quantity, product_id, cust_id) VALUES(" + str(total) + ", " + str(quantity) + ", " + str(
-            product_id) + str(cust_id) + ");")
+            product_id) + ", " + str(cust_id) + ");")
     cursor.execute("SELECT MAX(cart_item_id) FROM Cart_Item;")
     current_id = -1
     for (cart_item_id) in cursor:
