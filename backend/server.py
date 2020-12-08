@@ -236,6 +236,23 @@ def getCustomerProducts():
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
+@app.route("/bestSellers")
+def bestSellers():
+    cnx = mysql.connector.connect(user='root', password='',
+                                  host='34.72.148.165',
+                                  database='shop')
+    cursor = cnx.cursor()
+    cursor.execute("SELECT b.product_name, a.product_id, SUM(amount) AS num FROM Transaction a JOIN Products b ON a.product_id = b.product_id GROUP BY a.product_id ORDER BY num DESC")
+    r = cursor.fetchall()
+    print(r[0])
+    toReturn = {}
+    toReturn['firstBest'] = {"product_name": r[0][0], "product_id": r[0][1], "quantity": str(r[0][2])}
+    toReturn['secondBest'] = {"product_name": r[1][0], "product_id": r[1][1], "quantity": str(r[1][2])}
+    toReturn['thirdBest'] = {"product_name": r[2][0], "product_id": r[2][1], "quantity": str(r[2][2])}
+
+    response = jsonify(toReturn)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 # example http://127.0.0.1:5000/groupByType
 @app.route("/groupByType")
