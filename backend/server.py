@@ -272,7 +272,8 @@ def addTransaction():
                                   host='34.72.148.165',
                                   database='shop')
     cursor = cnx.cursor()
-    query = "SELECT quantity, product_id FROM Cart_Item WHERE cust_id = " + cust_id
+    cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE")
+    query = "SELECT quantity, product_id FROM Cart_Item WHERE cust_id = " + str(cust_id)
     cursor.execute(query)
     rows = cursor.fetchall()
     if(len(rows) == 0):
@@ -281,7 +282,11 @@ def addTransaction():
         query = "INSERT INTO Transaction (amount, cust_id, product_id) VALUES (" + str(r[0]) + ", " + str(cust_id) + ", " + str(r[1]) + ");"
         cursor.execute(query)
         cursor.commit()
-        
+    
+    delete_cart = "DELETE FROM Cart WHERE cust_id = " + str(cust_id)
+    cursor.execute(delete_cart)
+    delete_cart_items = "DELETE FROM Cart_Item WHERE cust_id = " + str(cust_id)
+    cursor.commit()
     cursor.close()
 
     response = jsonify(message="OK")
