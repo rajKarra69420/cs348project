@@ -209,6 +209,9 @@ def getCustomerProducts():
         cursor.execute("SELECT product_id, product_name, price FROM Products WHERE product_id = " + str(p[0]))
         for (product_id, product_name, price) in cursor:
             returnDict[product_id] = [product_name, '{0:.2f}'.format(price)]
+        cursor.execute("SELECT product_id, quantity FROM Cart_Item WHERE cust_id = " + cust_id + " AND product_id = " + str(p[0]))
+        for (product_id, quantity) in cursor:
+            returnDict[product_id].append(quantity)
     cursor.close()
 
     response = jsonify(returnDict)
