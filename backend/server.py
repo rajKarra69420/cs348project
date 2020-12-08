@@ -38,7 +38,7 @@ class ProductTable:
         self.cursor.execute(query)
 
         for (product_id, product_name, price) in self.cursor:
-            returnDict[product_id] = [product_name, '{0:.2f}'.format(price)]
+            returnDict[product_id] = [product_name, '{0:.2f}'.format(price), product_id]
         self.cursor.close()
         response = jsonify(returnDict)
         response.headers.add("Access-Control-Allow-Origin", "*")
