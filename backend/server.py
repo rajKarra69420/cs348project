@@ -180,6 +180,23 @@ def getProducts():
     tool = ProductTable()
     return tool.getProducts()
 
+@app.route('/getCustomerTotals')
+def getCustomerTotal():
+    cust_id = request.args.get('cust_id')
+    cnx = mysql.connector.connect(user='root', password='',
+                                  host='34.72.148.165',
+                                  database='shop')
+    cursor = cnx.cursor()
+    cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED")
+    cursor.execute("SELECT SUM(total), SUM(quantity) FROM Cart_Item WHERE cust_id = " + str(cust_id))
+    rows = cursor.fetchall()
+    toReturn = {}
+    workString = str(rows[0])
+    toReturn['totalPrice'] = workString.split(',')[0].replace('(Decimal(', '').replace(")\"", '\"').replace(')', '').replace("'", '')
+    toReturn['totalQuantity'] = workString.split(',')[1].replace(' Decimal(', '').replace(')', '').replace("'", '')
+    response = jsonify(toReturn)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 # example http://127.0.0.1:5000/getCustomerProducts?cust_id=5
 @app.route('/getCustomerProducts')
