@@ -324,24 +324,17 @@ def showCustomerTransactions():
     cnx = mysql.connector.connect(user='root', password='',
                                   host='34.72.148.165',
                                   database='shop')
-    cursor = cnx.cursor()   
-    query = "SELECT product_name, price FROM Products WHERE product_id IN (SELECT product_id FROM Transaction WHERE cust_id = " + str(cust_id) + ") "  + \
-    " ORDER BY product_id" # this allows us to ensure that we get the right amounts for each product
-    cursor.execute(query)
-    result = cursor.fetchall()
-    if(len(result) == 0):
-        response = jsonify(message="ERROR")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+    cursor = cnx.cursor()
+    cursor.execute("SELECT b.product_name, b.price, SUM(amount) AS num FROM Transaction a JOIN Products b ON a.product_id = b.product_id WHERE a.cust_id = " + str(cust_id) + " GROUP BY a.product_id")
+    
     returnDict = {}
-    for r in result:
-        query = "SELECT amount FROM Transaction WHERE cust_id = " + cust_id + "ORDER BY product_id"
-        cursor.execute(query)
-        re = cursor.fetchall()
-        returnDict[r[0]] = (re[0], r[1])
+    for (product_name, price, num) in cursor:
+        returnDict[product_name] = (product_name, str('{0:.2f}'.format(price)), str(num))
+        
     response = jsonify(returnDict)
     response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
+    
+    return response; 
 
 
 if __name__ == "__main__":

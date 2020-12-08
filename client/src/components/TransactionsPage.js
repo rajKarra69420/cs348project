@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import placeholderImage from './placeholder.png';
-import TextField from '@material-ui/core/TextField';
 import './ItemSelectionPage.css';
 
 const axios = require('axios');
@@ -32,7 +29,7 @@ class TransactionsPage extends Component {
             this.setState({
                 items,
             });
-            console.log(res.data)
+            console.log(items)
         })
         .catch((err) => {
             console.log(err);
@@ -41,13 +38,11 @@ class TransactionsPage extends Component {
 
     render() {
         const displayItems = (this.state.items == null) ? null : this.state.items.map(item => (
-            <Box css={{ width: 300, height: 350}}>
-                <img id="item-image" src={placeholderImage} alt="Logo" />
+            <Box css={{ width: 200, height: 200}}>
                 <div>Name: {item[0]}</div>
                 <div>Price: ${item[1]}</div>
-                <div><TextField label="Quantity" id={item[0]} value={this.state.quantity[item[0]] ? this.state.quantity[item[0]] : 1} onChange={this.handleChange} type="number"/></div>
+                <div>Quantity: {item[2]}</div>
                 <br></br>
-                <div><Button variant="contained" color="primary" onClick={() => this.onClick(item[0], item[1], item[2])}>Add to Cart</Button></div>
             </Box>
         ));
 
