@@ -324,21 +324,19 @@ def showCustomerTransactions():
     cnx = mysql.connector.connect(user='root', password='',
                                   host='34.72.148.165',
                                   database='shop')
-    cursor = cnx.cursor()
-    query = "SELECT amount FROM Transaction where cust_id = " + str(cust_id)
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    if(len(rows) == 0):
-        return
-    query = "SELECT product_id FROM cart_item_id WHERE cust_id = " + str(cust_id)
+    
+    query = "SELECT product_name, price FROM Products WHERE product_id IN (SELECT product_id FROM Transaction WHERE cust_id = " + str(cust_id) + ") "  +
+    "AND cust_id = " + str(cust_id) + " ORDER BY product_id" # this allows us to ensure that we get the right amounts for each product
     cursor.execute(query)
     result = cursor.fetchall()
+    if(len(result) == 0):
+        #send err 
     returnDict = {}
     for r in result:
-        query = "SELECT product_name FROM Products WHERE product_id = " + str(r)
+        query = "SELECT amount FROM Transaction ORDER BY product_id"
         cursor.execute(query)
         re = cursor.fetchall()
-        retDict[re[0]] = (rows[0], rows[1])
+        retDict[r[0]] = (re[0], r[1])
     response = jsonify(returnDict)
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
