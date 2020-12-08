@@ -266,8 +266,10 @@ def login():
 
     return response
 
+#example http://127.0.0.1:5000/login?cust_id=something
+@app.route("/addTransaction")
 def addTransaction():
-    #get args
+    cust_id = request.args.get('cust_id')
     cnx = mysql.connector.connect(user='root', password='',
                                   host='34.72.148.165',
                                   database='shop')
