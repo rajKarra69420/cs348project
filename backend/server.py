@@ -204,17 +204,14 @@ def getCustomerProducts():
             continue
         product_ids.append(results[0])
 
-    product_names = []
+    returnDict = {}
     for p in product_ids:
-        cursor.execute("SELECT * FROM Products WHERE product_id = " + str(p[0]))
-        results = cursor.fetchall()
-        if len(results) == 0:
-            continue
-        print(str(results[0]))
-        product_names.append(str(results[0]).replace('Decimal(\'', '\'').replace('),', ','))
+        cursor.execute("SELECT product_id, product_name, price FROM Products WHERE product_id = " + str(p[0]))
+        for (product_id, product_name, price) in cursor:
+            returnDict[product_id] = [product_name, '{0:.2f}'.format(price)]
     cursor.close()
 
-    response = jsonify(product_names)
+    response = jsonify(returnDict)
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
