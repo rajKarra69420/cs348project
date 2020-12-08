@@ -211,8 +211,9 @@ def getCustomerProducts():
     cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED")
     cursor.execute("SELECT cart_item_id FROM Cart_Item WHERE cust_id = " + cust_id)
     rows = cursor.fetchall()
-    if (len(rows) == 0):
-        return
+    if(len(rows) == 0):
+        response = jsonify(message="EMPTY")
+        return response
     product_ids = []
     for r in rows:
         cursor.execute("SELECT product_id FROM Cart_Item WHERE cart_item_id = " + str(r[0]))
@@ -279,15 +280,18 @@ def addTransaction():
     cursor.execute(query)
     rows = cursor.fetchall()
     if(len(rows) == 0):
-        return
+        response = jsonify(message="EMPTY")
+        return response
     for r in rows:
         query = "INSERT INTO Transaction (amount, cust_id, product_id) VALUES (" + str(r[0]) + ", " + str(cust_id) + ", " + str(r[1]) + ");"
         cursor.execute(query)
-        cursor.commit()
+        cnx.commit()
     
     delete_cart = "DELETE FROM Cart WHERE cust_id = " + str(cust_id)
     cursor.execute(delete_cart)
+    cnx.commit()
     delete_cart_items = "DELETE FROM Cart_Item WHERE cust_id = " + str(cust_id)
+    cursor.execute(delete_cart_items)
     cnx.commit()
     cursor.close()
 
