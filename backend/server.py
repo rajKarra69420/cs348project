@@ -23,12 +23,12 @@ class ProductTable:
         self.cursor.execute(prepared_query, tup)
         print("query: " + prepared_query + "\n")
         self.cnx.commit()
-        self.cursor.close()
+
 
         response = jsonify(message="OK")
         response.headers.add("Access-Control-Allow-Origin", "*")
 
-        self.reset()
+
 
         return response
 
