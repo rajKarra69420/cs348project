@@ -30,7 +30,7 @@ def addProduct():
     print("two: " + new_price + "\n")
     print("three: " + new_type + "\n")
 
-    prepared_cursor = cnx.cursor(cursor_class=MySQLCursorPrepared)
+    #prepared_cursor = cnx.cursor(cursor_class=MySQLCursorPrepared)
     cnx = mysql.connector.connect(user='root', password='',
                                   host='34.72.148.165',
                                   database='shop')
@@ -40,7 +40,7 @@ def addProduct():
     #query = "INSERT INTO Products (product_name, price, type) VALUES (" + new_product_name + ", " + str(
     #    new_price) + ", " + new_type + ");"  # a query populated by the following if-statements
     prepared_query = "INSERT INTO Products (product_name, price, type) VALUES (%s,%s,%s,%s)"
-    tup = (new_price, new_price, new_type)
+    tup = (new_product_name, new_price, new_type)
     cursor.execute(prepared_query, tup)
     print("query: " + prepared_query + "\n")
     #cursor.execute(query)
@@ -109,6 +109,7 @@ def addToCart():
 
 # example http://127.0.0.1:5000/registerCustomer?username=vikasdorn&password=password1&address=557%20Cherrywood%20Lane&email_address=vikasdorn@gmail.com
 # you need to GET this page with the username, password, address (where spaces are "%20"), and email_address arguments
+#https://pynative.com/python-mysql-execute-parameterized-query-using-prepared-statement/
 @app.route('/registerCustomer')
 def registerCustomer():
     print("registerCustomer")
@@ -125,10 +126,15 @@ def registerCustomer():
     cnx = mysql.connector.connect(user='root', password='',
                                   host='34.72.148.165',
                                   database='shop')
-    cursor = cnx.cursor()
-    query = "INSERT INTO Customer (username, password, address, email_address) VALUES (" + new_username + ", " + new_password + ", " + new_address + ", " + new_email + ");"  # a query populated by the following if-statements
-    print("query: " + query + "\n")
-    cursor.execute(query)
+    #prepared_cursor = cnx.cursor(cursor_class=MySQLCursorPrepared)
+    #cursor = cnx.cursor()
+    cursor = connection.cursor(prepared=True)
+    #query = "INSERT INTO Customer (username, password, address, email_address) VALUES (" + new_username + ", " + new_password + ", " + new_address + ", " + new_email + ");"  # a query populated by the following if-statements
+    prepared_query = "INSERT INTO Customer (username, password, address, email_address) VALUES (%s,%s,%s,%s)"
+    tup = (new_username, new_password, new_address, new_email)
+    cursor.execute(prepared_query, tup)
+    print("query: " + prepared_query + "\n")
+    #cursor.execute(query)
     cnx.commit()
     cursor.close()
 
