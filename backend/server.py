@@ -288,7 +288,7 @@ def addTransaction():
     delete_cart = "DELETE FROM Cart WHERE cust_id = " + str(cust_id)
     cursor.execute(delete_cart)
     delete_cart_items = "DELETE FROM Cart_Item WHERE cust_id = " + str(cust_id)
-    cursor.commit()
+    cnx.commit()
     cursor.close()
 
     response = jsonify(message="OK")
