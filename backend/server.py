@@ -4,6 +4,7 @@ from flask import (
     jsonify
 )
 import mysql.connector
+from mysql.connector.cursor import MySQLCursorPrepared
 import json
 
 app = Flask(__name__)
@@ -17,6 +18,7 @@ def index():
 # example http://127.0.0.1:5000/addProduct?product_name=pencil&price=5&type=schoolgear
 # you need to GET this page with the product_name, price, and type arguments
 # spaces indicated by "%20"
+#https://pynative.com/python-mysql-execute-parameterized-query-using-prepared-statement/
 @app.route('/addProduct')
 def addProduct():
     print("addProduct")
@@ -28,14 +30,20 @@ def addProduct():
     print("two: " + new_price + "\n")
     print("three: " + new_type + "\n")
 
+    prepared_cursor = cnx.cursor(cursor_class=MySQLCursorPrepared)
     cnx = mysql.connector.connect(user='root', password='',
                                   host='34.72.148.165',
                                   database='shop')
-    cursor = cnx.cursor()
-    query = "INSERT INTO Products (product_name, price, type) VALUES (" + new_product_name + ", " + str(
-        new_price) + ", " + new_type + ");"  # a query populated by the following if-statements
-    print("query: " + query + "\n")
-    cursor.execute(query)
+    #cursor = cnx.cursor()
+    cursor = connection.cursor(prepared=True)
+    prepared_statement = "INSERT INTO Products (product_name, price, type) VALUES ();"
+    #query = "INSERT INTO Products (product_name, price, type) VALUES (" + new_product_name + ", " + str(
+    #    new_price) + ", " + new_type + ");"  # a query populated by the following if-statements
+    prepared_query = "INSERT INTO Products (product_name, price, type) VALUES (%s,%s,%s,%s)"
+    tup = (new_price, new_price, new_type)
+    cursor.execute(prepared_query, tup)
+    print("query: " + prepared_query + "\n")
+    #cursor.execute(query)
     cnx.commit()
     cursor.close()
 
