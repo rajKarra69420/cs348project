@@ -324,13 +324,15 @@ def showCustomerTransactions():
     cnx = mysql.connector.connect(user='root', password='',
                                   host='34.72.148.165',
                                   database='shop')
-    
-    query = "SELECT product_name, price FROM Products WHERE product_id IN (SELECT product_id FROM Transaction WHERE cust_id = " + str(cust_id) + ") "  +
+    cursor = cnx.cursor()
+    query = "SELECT product_name, price FROM Products WHERE product_id IN (SELECT product_id FROM Transaction WHERE cust_id = " + str(cust_id) + ") "  + \
     "AND cust_id = " + str(cust_id) + " ORDER BY product_id" # this allows us to ensure that we get the right amounts for each product
     cursor.execute(query)
     result = cursor.fetchall()
     if(len(result) == 0):
-        #send err 
+        response = jsonify(message="ERROR")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
     returnDict = {}
     for r in result:
         query = "SELECT amount FROM Transaction ORDER BY product_id"
