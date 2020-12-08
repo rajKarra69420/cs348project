@@ -206,7 +206,7 @@ def getCustomerProducts():
 
     product_names = []
     for p in product_ids:
-        cursor.execute("SELECT product_name FROM Products WHERE product_id = " + str(p[0]))
+        cursor.execute("SELECT * FROM Products WHERE product_id = " + str(p[0]))
         results = cursor.fetchall()
         if len(results) == 0:
             continue
