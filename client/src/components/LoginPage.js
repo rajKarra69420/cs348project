@@ -55,7 +55,7 @@ class LoginPage extends Component {
 
     render() {
         const redirect = this.state.redirect;
-        const redirectString = '/?userid=' + this.state.userid;
+        const redirectString = '/itemSelectionPage?userid=' + this.state.userid;
         if (redirect) {
             return <Redirect to={redirectString}/>
         }
