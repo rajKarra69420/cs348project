@@ -277,7 +277,7 @@ def addTransaction():
     rows = cursor.fetchall()
     if(len(rows) == 0):
         return
-    for each r in rows:
+    for r in rows:
         query = "INSERT INTO Transaction (amount, cust_id, product_id) VALUES (" + str(r[0]) + ", " + str(cust_id) + ", " + str(r[1]) + ");"
         cursor.execute(query)
         cursor.commit()
