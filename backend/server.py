@@ -59,6 +59,8 @@ class ProductTable:
         response = jsonify(productGroupRet)
         response.headers.add("Access-Control-Allow-Origin", "*")
 
+        self.reset()
+
         return response
     def reset(self):
         self.__init__()
