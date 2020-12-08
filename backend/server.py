@@ -6,6 +6,63 @@ from flask import (
 import mysql.connector
 import json
 
+class ProductTable:
+    def __init__(self):
+        self.cnx = mysql.connector.connect(user='root', password='',
+                                      host='34.72.148.165',
+                                      database='shop')
+        self.cursor = self.cnx.cursor()
+
+    def addProduct(self, new_product_name, new_price, new_type):
+        self.cursor = self.cnx.cursor(prepared=True)
+        prepared_statement = "INSERT INTO Products (product_name, price, type) VALUES ();"
+        # query = "INSERT INTO Products (product_name, price, type) VALUES (" + new_product_name + ", " + str(
+        #    new_price) + ", " + new_type + ");"  # a query populated by the following if-statements
+        prepared_query = "INSERT INTO Products (product_name, price, type) VALUES (%s,%s,%s,%s)"
+        tup = (new_product_name, new_price, new_type)
+        self.cursor.execute(prepared_query, tup)
+        print("query: " + prepared_query + "\n")
+        self.cnx.commit()
+        self.cursor.close()
+
+        response = jsonify(message="OK")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+
+        self.reset()
+
+        return response
+
+    def getProducts(self):
+        returnDict = {}
+        query = "SELECT product_id, product_name, price FROM Products"  # a query populated by the following if-statements
+        self.cursor.execute(query)
+
+        for (product_id, product_name, price) in self.cursor:
+            returnDict[product_id] = [product_name, '{0:.2f}'.format(price)]
+        self.cursor.close()
+        response = jsonify(returnDict)
+        response.headers.add("Access-Control-Allow-Origin", "*")
+
+        self.reset()
+
+        return response
+
+    def groupByType(self):
+        product_group_query = "SELECT product_name, sum(price) FROM Products GROUP BY type";
+        self.cursor.execute(product_group_query)
+        rows_group = self.cursor.fetchall()
+        if (len(rows_group) == 0):
+            return
+        productGroupRet = {}
+        for row in product_group_query:
+            productGroupRet[row[0]] = '{0:.2f}'.format(row[1])
+        response = jsonify(productGroupRet)
+        response.headers.add("Access-Control-Allow-Origin", "*")
+
+        return response
+    def reset(self):
+        self.__init__()
+
 app = Flask(__name__)
 
 
@@ -24,25 +81,8 @@ def addProduct():
     new_price = request.args.get('price')
     new_type = "'" + request.args.get('type') + "'"
 
-    print("one: " + new_product_name + "\n")
-    print("two: " + new_price + "\n")
-    print("three: " + new_type + "\n")
-
-    cnx = mysql.connector.connect(user='root', password='',
-                                  host='34.72.148.165',
-                                  database='shop')
-    cursor = cnx.cursor()
-    query = "INSERT INTO Products (product_name, price, type) VALUES (" + new_product_name + ", " + str(
-        new_price) + ", " + new_type + ");"  # a query populated by the following if-statements
-    print("query: " + query + "\n")
-    cursor.execute(query)
-    cnx.commit()
-    cursor.close()
-
-    response = jsonify(message="OK")
-    response.headers.add("Access-Control-Allow-Origin", "*")
-
-    return response
+    tool = ProductTable()
+    return tool.addProduct(new_product_name, new_price, new_type)
 
 
 # example http://127.0.0.1:5000/addToCart?product_id=1&cust_id=2&quantity=5&total=100
@@ -135,22 +175,8 @@ def registerCustomer():
 def getProducts():
     print("getProducts")
 
-    cnx = mysql.connector.connect(user='root', password='',
-                                  host='34.72.148.165',
-                                  database='shop')
-    cursor = cnx.cursor()
-
-    returnDict = {}
-    query = "SELECT product_id, product_name, price FROM Products"  # a query populated by the following if-statements
-    cursor.execute(query)
-
-    for (product_id, product_name, price) in cursor:
-        returnDict[product_id] = [product_name, '{0:.2f}'.format(price), product_id]
-    cursor.close()
-    response = jsonify(returnDict)
-    response.headers.add("Access-Control-Allow-Origin", "*")
-
-    return response
+    tool = ProductTable()
+    return tool.getProducts()
 
 
 # example http://127.0.0.1:5000/getCustomerProducts?cust_id=5
@@ -193,22 +219,10 @@ def getCustomerProducts():
 # example http://127.0.0.1:5000/groupByType
 @app.route("/groupByType")
 def groupByType():
-    cnx = mysql.connector.connect(user='root', password='',
-                                  host='34.72.148.165',
-                                  database='shop')
-    cursor = cnx.cursor()
-    product_group_query = "SELECT product_name, sum(price) FROM Products GROUP BY type";
-    cursor.execute(product_group_query)
-    rows_group = cursor.fetchall()
-    if (len(rows_group) == 0):
-        return
-    productGroupRet = {}
-    for row in product_group_query:
-        productGroupRet[row[0]] = '{0:.2f}'.format(row[1])
-    response = jsonify(productGroupRet)
-    response.headers.add("Access-Control-Allow-Origin", "*")
 
-    return response
+    tool = ProductTable()
+    return tool.groupByType()
+
 #example http://127.0.0.1:5000/login?username=random&password=thing
 @app.route("/login")
 def login():
