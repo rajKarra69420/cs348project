@@ -267,7 +267,7 @@ def login():
 
     return response
 
-#example http://127.0.0.1:5000/login?cust_id=something
+#example http://127.0.0.1:5000/addTransaction?cust_id=something
 @app.route("/addTransaction")
 def addTransaction():
     cust_id = request.args.get('cust_id')
@@ -299,20 +299,22 @@ def addTransaction():
     response.headers.add("Access-Control-Allow-Origin", "*")
 
     return response
-    
+
+#example http://127.0.0.1:5000/getTransactions?cust_id=something
+@app.route('/getTransactions')
 def showCustomerTransactions():
-    #get args
+    cust_id = request.args.get('cust_id')
     cnx = mysql.connector.connect(user='root', password='',
                                   host='34.72.148.165',
                                   database='shop')
     cursor = cnx.cursor()
-    query = "SELECT amount, transaction_type FROM transaction where cust_id = " + str(cust_id)
+    query = "SELECT amount FROM Transaction where cust_id = " + str(cust_id)
     cursor.execute(query)
     rows = cursor.fetchall()
     if(len(rows) == 0):
         return
     query = "SELECT product_id FROM cart_item_id WHERE cust_id = " + str(cust_id)
-    cursor.excecute(query)
+    cursor.execute(query)
     result = cursor.fetchall()
     returnDict = {}
     for r in result:
