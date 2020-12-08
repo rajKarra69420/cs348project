@@ -23,12 +23,12 @@ class ProductTable:
         self.cursor.execute(prepared_query, tup)
         print("query: " + prepared_query + "\n")
         self.cnx.commit()
-        self.cursor.close()
+
 
         response = jsonify(message="OK")
         response.headers.add("Access-Control-Allow-Origin", "*")
 
-        self.reset()
+
 
         return response
 
@@ -188,7 +188,7 @@ def getCustomerTotal():
                                   database='shop')
     cursor = cnx.cursor()
     cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED")
-    cursor.execute("SELECT SUM(total), SUM(quantity) FROM Cart_Item WHERE cust_id = " + str(cust_id))
+    cursor.execute("SELECT SUM(total), SUM(quantity) FROM Cart_Item WHERE cust_id = %s", [(str(cust_id))])
     rows = cursor.fetchall()
     toReturn = {}
     workString = str(rows[0])
@@ -209,14 +209,14 @@ def getCustomerProducts():
     #cursor = cnx.cursor()
     cursor = cnx.cursor(prepared=True)
     cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED")
-    cursor.execute("SELECT cart_item_id FROM Cart_Item WHERE cust_id = " + cust_id)
+    cursor.execute("SELECT cart_item_id FROM Cart_Item WHERE cust_id = %s", [(str(cust_id))])
     rows = cursor.fetchall()
     if(len(rows) == 0):
         response = jsonify(message="EMPTY")
         return response
     product_ids = []
     for r in rows:
-        cursor.execute("SELECT product_id FROM Cart_Item WHERE cart_item_id = " + str(r[0]))
+        cursor.execute("SELECT product_id FROM Cart_Item WHERE cart_item_id = %s", [(str(r[0]))])
         results = cursor.fetchall()
         if len(results) == 0:
             continue
@@ -224,10 +224,10 @@ def getCustomerProducts():
 
     returnDict = {}
     for p in product_ids:
-        cursor.execute("SELECT product_id, product_name, price FROM Products WHERE product_id = " + str(p[0]))
+        cursor.execute("SELECT product_id, product_name, price FROM Products WHERE product_id = %s", [(str(p[0]))])
         for (product_id, product_name, price) in cursor:
             returnDict[product_id] = [product_name, '{0:.2f}'.format(price)]
-        cursor.execute("SELECT product_id, quantity FROM Cart_Item WHERE cust_id = " + cust_id + " AND product_id = " + str(p[0]))
+        cursor.execute("SELECT product_id, quantity FROM Cart_Item WHERE cust_id = %s AND product_id = %s", (cust_id, str(p[0])))
         for (product_id, quantity) in cursor:
             returnDict[product_id].append(quantity)
     cursor.close()
@@ -326,7 +326,6 @@ def showCustomerTransactions():
                                   database='shop')
     cursor = cnx.cursor()
     cursor.execute("SELECT b.product_name, b.price, SUM(amount) AS num FROM Transaction a JOIN Products b ON a.product_id = b.product_id WHERE a.cust_id = " + str(cust_id) + " GROUP BY a.product_id")
-    
     returnDict = {}
     for (product_name, price, num) in cursor:
         returnDict[product_name] = (product_name, str('{0:.2f}'.format(price)), str(num))
