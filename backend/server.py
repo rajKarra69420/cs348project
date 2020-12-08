@@ -188,7 +188,7 @@ def getCustomerTotal():
                                   database='shop')
     cursor = cnx.cursor()
     cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED")
-    cursor.execute("SELECT SUM(total), SUM(quantity) FROM Cart_Item WHERE cust_id = " + str(cust_id))
+    cursor.execute("SELECT SUM(total), SUM(quantity) FROM Cart_Item WHERE cust_id = %s", [(str(cust_id))])
     rows = cursor.fetchall()
     toReturn = {}
     workString = str(rows[0])
