@@ -18,8 +18,8 @@ class ProductTable:
         prepared_statement = "INSERT INTO Products (product_name, price, type) VALUES ();"
         # query = "INSERT INTO Products (product_name, price, type) VALUES (" + new_product_name + ", " + str(
         #    new_price) + ", " + new_type + ");"  # a query populated by the following if-statements
-        prepared_query = "INSERT INTO Products (product_name, price, type) VALUES (%s,%s,%s,%s)"
-        tup = (new_product_name, new_price, new_type)
+        prepared_query = "INSERT INTO Products (product_name, price, type) VALUES (%s,%s,%s)"
+        tup = (str(new_product_name), str(new_price), str(new_type))
         self.cursor.execute(prepared_query, tup)
         print("query: " + prepared_query + "\n")
         self.cnx.commit()
