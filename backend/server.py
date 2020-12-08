@@ -272,9 +272,16 @@ def addTransaction():
                                   host='34.72.148.165',
                                   database='shop')
     cursor = cnx.cursor()
-    query = "INSERT INTO Transaction (amount, transaction_type, cart_item_id, cust_id) VALUES (" + str(new_amount) + ", " + new_transaction_type + ", " + str(new_cart_id) + ", " + str(cust_id) + ");"
+    query = "SELECT quantity, product_id FROM Cart_Item WHERE cust_id = " + cust_id
     cursor.execute(query)
-    cursor.commit()
+    rows = cursor.fetchall()
+    if(len(rows) == 0):
+        return
+    for each r in rows:
+        query = "INSERT INTO Transaction (amount, cust_id, product_id) VALUES (" + str(r[0]) + ", " + str(cust_id) + ", " + str(r[1]) + ");"
+        cursor.execute(query)
+        cursor.commit()
+        
     cursor.close()
 
     response = jsonify(message="OK")
