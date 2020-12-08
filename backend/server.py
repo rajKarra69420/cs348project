@@ -292,7 +292,6 @@ def addTransaction():
                                   host='34.72.148.165',
                                   database='shop')
     cursor = cnx.cursor()
-    cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE")
     query = "SELECT quantity, product_id FROM Cart_Item WHERE cust_id = " + str(cust_id)
     cursor.execute(query)
     rows = cursor.fetchall()
