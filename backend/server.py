@@ -210,7 +210,8 @@ def getCustomerProducts():
         results = cursor.fetchall()
         if len(results) == 0:
             continue
-        product_names.append(results[0])
+        print(str(results[0]))
+        product_names.append(str(results[0]).replace('Decimal(\'', '\'').replace('),', ','))
     cursor.close()
 
     response = jsonify(product_names)
